@@ -174,7 +174,7 @@ struct HttpRequest
         switch (method)
         {
         case HttpOSPlatform::WINDOWS:
-            return "1.0";
+            return "Windows";
         }
         return "Not Defined";
     }
@@ -280,7 +280,12 @@ HttpResult losReadHTTPSocket(const losSocket handle, HttpRequest *request)
             if (lines[line].find("sec-ch-ua-platform") != std::string::npos)
             {
                 std::vector<std::string> split = regexLine(lines[line++]);
-                uint8_t i = 1;
+                uint8_t index = 2;
+                // eat whitespace
+                while (split[index] == " " || split[index] == "\r" || split[index] == "\t")
+                    index++;
+                if (split[index] == "Windows")
+                    request->platform = HttpOSPlatform::WINDOWS;
 
             }
         }
