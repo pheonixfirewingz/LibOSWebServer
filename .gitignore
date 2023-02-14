@@ -1,2 +1,6 @@
+build
+TOOLCHAIN
 .vs
-out
+.vscode
+.idea
+src/test/Cmake.h

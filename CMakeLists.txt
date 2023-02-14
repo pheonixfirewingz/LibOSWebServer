@@ -1,6 +1,6 @@
 ﻿cmake_minimum_required(VERSION 3.24.0)
 
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -35,9 +35,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     include(LinkPackage)
     message(INFO " - building for Linux....")
     include(${PROJECT_SOURCE_DIR}/cmake/Linux.cmake)
-    find_package(Vulkan)
     add_executable(webserver ${PROJECT_SOURCE_DIR}/src/Main.cpp)
-    link_package(Vulkan)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
     message(INFO " - building for Windows....")
     include(${PROJECT_SOURCE_DIR}/cmake/Windows.cmake)
