@@ -192,10 +192,10 @@ void HttpRequest::print()
 {
     if (method == METHOD_ERROR || url_path.empty() || version == VERSION_ERROR)
             return;
-        printf("HTTP REQUEST\n METHOD: %s\n URL: %s\n VERSION: %s\n BROWSER_OS: %s\n\n\n", writeMethod(method),
+        printf("\nHTTP REQUEST\n\tMETHOD: %s\n\tURL: %s\n\tVERSION: %s\n\tBROWSER_OS: %s\n\n\n", writeMethod(method),
                url_path.c_str(), writeVersion(version), osToString(platform));
         if (!body.empty())
-            printf("BODY: %s\n", body.c_str());
+            printf("HTTP REQUEST BODY: %s\n", body.c_str());
 }
 #endif
 
