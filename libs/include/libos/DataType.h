@@ -13,16 +13,11 @@
 // Copyright Luke Shore (c) 2020, 2023
 /*! Importation of libraries*/
 #include <atomic>
-#include <stdint.h>
+#include <cstdint>
+#include <cstddef>
 typedef float float32_t;  //!< this data type is used to represent a 32bit floating point number
 typedef double float64_t; //!< this data type is used to represent a 64bit floating point number
-typedef uint16_t unicode_t; //!< this data type is basically a uint16_t but from better code readably when working with text it will make more sense to use unicode_t
-typedef size_t data_size_t;   //!< this data type is used to represent size of some data unsigned version
-#if ON_WINDOWS || ON_UWP || WIN32 || _WIN64
-typedef signed long long int sdata_size_t; //!< this data type is used to represent size of some data signed version
-#else
-typedef ssize_t sdata_size_t; //!< this data type is used to represent size of some data signed version
-#endif
+typedef wchar_t unicode_t; //!< this data type is basically a uint16_t but from better code readably when working with text it will make more sense to use unicode_t
 
 typedef std::atomic<float32_t> float32_ts; //!< this is men't do be a thread save version of the float32_t
 typedef std::atomic<float64_t> float64_ts; //!< this is men't do be a thread save version of the float64_t
@@ -32,19 +27,17 @@ typedef std::atomic<uint16_t> uint16_ts; //!< this is men't do be a thread save 
 typedef std::atomic<unicode_t> unicode_ts; //!< this is men't do be a thread save version of the unicode_t
 typedef std::atomic<uint32_t> uint32_ts; //!< this is men't do be a thread save version of the uint32_t
 typedef std::atomic<uint64_t> uint64_ts; //!< this is men't do be a thread save version of the uint64_t
-typedef std::atomic<data_size_t> data_size_ts; //!< this is men't do be a thread save version of the data_size_t
 
 typedef std::atomic<int8_t> int8_ts; //!< this is men't do be a thread save version of the int8_t
 typedef std::atomic<int16_t> int16_ts; //!< this is men't do be a thread save version of the int16_t
 typedef std::atomic<int32_t> int32_ts; //!< this is men't do be a thread save version of the int32_t
 typedef std::atomic<int64_t> int64_ts; //!< this is men't do be a thread save version of the int64_t
-typedef std::atomic<sdata_size_t> sdata_size_ts; //!< this is men't do be a thread save version of the sdata_size_t
 /*!
  * \brief losSize is used to represent a size of a window or position of this mouse */
 typedef struct losSize
 {
-    int64_t length_one = (int64_t)0; //!< length_one is the same as width or x
-    int64_t length_two = (int64_t)0; //!< length_one is the same as height or y
+    int64_t length_one = static_cast<int64_t>(0); //!< length_one is the same as width or x
+    int64_t length_two = static_cast<int64_t>(0); //!< length_one is the same as height or y
 } losSize;
 /*!
  * \brief losResult enum is used to indicate the result of a LibOS function call that can fail instead of throwing a

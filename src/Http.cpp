@@ -1,5 +1,5 @@
 #include "Http.hpp"
-
+#include <map>
 namespace libos::http_extention
 {
 
@@ -191,11 +191,11 @@ std::vector<std::string> regexLine(std::string source)
 void HttpRequest::print()
 {
     if (method == METHOD_ERROR || url_path.empty() || version == VERSION_ERROR)
-            return;
-        printf("\nHTTP REQUEST\n\tMETHOD: %s\n\tURL: %s\n\tVERSION: %s\n\tBROWSER_OS: %s\n\n\n", writeMethod(method),
-               url_path.c_str(), writeVersion(version), osToString(platform));
-        if (!body.empty())
-            printf("HTTP REQUEST BODY: %s\n", body.c_str());
+        return;
+    printf("\nHTTP REQUEST\n\tMETHOD: %s\n\tURL: %s\n\tVERSION: %s\n\tBROWSER_OS: %s\n\n\n", writeMethod(method),
+           url_path.c_str(), writeVersion(version), osToString(platform));
+    if (!body.empty())
+        printf("HTTP REQUEST BODY: %s\n", body.c_str());
 }
 #endif
 
@@ -203,11 +203,11 @@ HttpResult losWriteHttpResponse(const losSocket handle, const HttpRequest &reque
                                 const char *server_name)
 {
     HttpResult result = HTTP_SUCCESS;
-    //http version
+    // http version
     std::string buffer = writeVersion(request.version);
     buffer += " ";
     buffer += "\r\n";
-    //current time
+    // current time
     std::time_t current_time = std::time(nullptr);
     std::tm *time_info = std::localtime(&current_time);
     char buf[80];
@@ -217,15 +217,15 @@ HttpResult losWriteHttpResponse(const losSocket handle, const HttpRequest &reque
         buffer += "Server: " + std::string(server_name) + "\r\n";
 
     buffer += "Last-Modified: Wed, 22 Jul 2009 19:15:56 GMT\r\n";
-    //body size
+    // body size
     buffer += "Content-Length: ";
     buffer += std::to_string(request.body.size());
     buffer += "\r\n";
-    //body type
+    // body type
     buffer += "Content-Type: text/html\r\n";
     buffer += "Connection: Closed\r\n\r\n";
-    //body
-    if(!request.body.empty())
+    // body
+    if (!request.body.empty())
         buffer += request.body;
 
     printf("HTTP WRITE:\r\n%s", buffer.c_str());
@@ -238,7 +238,7 @@ HttpResult losWriteHttpResponse(const losSocket handle, const HttpRequest &reque
 HttpResult losReadHTTPSocket(const losSocket handle, HttpRequest *request)
 {
     HttpResult result = HTTP_SUCCESS;
-    static const std::ReadOnlyLookupTable<data_size_t, HttpMethod> http_method_lookup = {
+    static const std::map<size_t, HttpMethod> http_method_lookup = {
         {std::hash<std::string>{}("GET"), HttpMethod::GET},
         {std::hash<std::string>{}("HEAD"), HttpMethod::HEAD},
         {std::hash<std::string>{}("POST"), HttpMethod::POST},
@@ -249,7 +249,7 @@ HttpResult losReadHTTPSocket(const losSocket handle, HttpRequest *request)
         {std::hash<std::string>{}("TRACE"), HttpMethod::TRACE},
         {std::hash<std::string>{}("PATCH"), HttpMethod::PATCH},
     };
-    static const std::ReadOnlyLookupTable<data_size_t, HttpVersion> http_version_lookup = {
+    static const std::map<size_t, HttpVersion> http_version_lookup = {
         {std::hash<std::string>{}("HTTP/1.0"), HttpVersion::ONE_ZERO},
         {std::hash<std::string>{}("HTTP/1.1"), HttpVersion::ONE_ONE},
         {std::hash<std::string>{}("HTTP/1.2"), HttpVersion::ONE_TWO},
@@ -271,10 +271,10 @@ HttpResult losReadHTTPSocket(const losSocket handle, HttpRequest *request)
         {
             std::vector<std::string> split = regexLine(lines[line++]);
             uint64_t index = 0;
-            auto *method_ptr = http_method_lookup.find(std::hash<std::string>{}(split[index++]));
-            if (method_ptr != nullptr)
+            if (auto method_ptr = http_method_lookup.find(std::hash<std::string>{}(split[index++]));
+                method_ptr != http_method_lookup.end())
             {
-                request->method = *method_ptr;
+                request->method = method_ptr->second;
                 // eat whitespace
                 while (split[index] == " " || split[index] == "\r" || split[index] == "\t")
                     index++;

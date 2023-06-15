@@ -6,7 +6,6 @@
 //
 #include <ctime>
 #include <libos/NetIO.h>
-#include <libos/extendstd/LookUpTable.h>
 #include <ranges>
 #include <regex>
 #include <string>
