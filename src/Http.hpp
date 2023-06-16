@@ -154,8 +154,10 @@ struct HttpRequest
 
 std::vector<std::string> regexLine(std::string source);
 
-HttpResult losReadHTTPSocket(const losSocket handle, HttpRequest *request);
+HttpResult losCreateHTTPSocket(_out_ losSocket *handle, _in_ const char *address, _in_ bool is_server);
 
-HttpResult losWriteHttpResponse(const losSocket handle, const HttpRequest &request, bool isServer,
-                                const char *server_name);
+HttpResult losReadHTTPSocket(_in_ const losSocket handle, _out_ HttpRequest *request);
+
+HttpResult losWriteHttpResponse(_in_ const losSocket handle, _in_ const HttpRequest &request, _in_ bool isServer,
+                                _in_ const char *server_name);
 } // namespace libos::http_extention

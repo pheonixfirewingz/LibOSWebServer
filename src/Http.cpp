@@ -199,8 +199,15 @@ void HttpRequest::print()
 }
 #endif
 
-HttpResult losWriteHttpResponse(const losSocket handle, const HttpRequest &request, bool is_server,
-                                const char *server_name)
+HttpResult losCreateHTTPSocket(_out_ losSocket *handle, _in_ const char *address, _in_ bool is_server)
+{
+    losCreateSocketInfo info{.address = address,.address_size = std::strlen(address),.port = 25567};
+    info.socket_bits = is_server ? LOS_SOCKET_SERVER | LOS_SOCKET_TCP : LOS_SOCKET_TCP;
+    return static_cast<HttpResult>(losCreateSocket(handle, info));
+}
+
+HttpResult losWriteHttpResponse(_in_ const losSocket handle, _in_ const HttpRequest &request, _in_ bool is_server,
+                                _in_ const char *server_name)
 {
     HttpResult result = HTTP_SUCCESS;
     // http version
@@ -235,7 +242,7 @@ HttpResult losWriteHttpResponse(const losSocket handle, const HttpRequest &reque
     return result;
 }
 
-HttpResult losReadHTTPSocket(const losSocket handle, HttpRequest *request)
+HttpResult losReadHTTPSocket(_in_ const losSocket handle, _out_ HttpRequest *request)
 {
     HttpResult result = HTTP_SUCCESS;
     static const std::map<size_t, HttpMethod> http_method_lookup = {

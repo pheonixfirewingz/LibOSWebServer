@@ -39,19 +39,13 @@ class Server
 
     int run()
     {
-        losCreateSocketInfo info{};
-        info.address = "localhost";
-        info.address_size = 10;
-        info.socket_bits = LOS_SOCKET_SERVER | LOS_SOCKET_TCP;
-        info.port = 25567;
-        losResult res = LOS_SUCCESS;
-        if ((res = losCreateSocket(&serverSocket, info)) != LOS_SUCCESS)
+        if (HttpResult res = losCreateHTTPSocket(&serverSocket, "localhost", true); res != HTTP_SUCCESS)
             return res;
 
         while (running)
         {
             losSocket client;
-            if ((res = losWaitForClient(serverSocket, &client)) != LOS_SUCCESS)
+            if (losResult res = losWaitForClient(serverSocket, &client); res != LOS_SUCCESS)
                 running = false;
             HttpRequest request{};
             if (losReadHTTPSocket(client, &request) == HTTP_SUCCESS)
@@ -68,7 +62,7 @@ class Server
         }
 
         losDestroySocket(serverSocket);
-        return res;
+        return LOS_SUCCESS;
     }
 };
 } // namespace WebServer
